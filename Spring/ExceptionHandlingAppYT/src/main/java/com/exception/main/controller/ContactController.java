@@ -36,21 +36,23 @@ public class ContactController {
 			return new ResponseEntity<ContactDTO>(dto, HttpStatus.CREATED);
 		}
 	}
-	
+
 	@PutMapping("/update")
 	public ResponseEntity<ContactDTO> updateContact(@Valid @RequestBody Contact contact) {
 		if (contact.getId() != null) {
 			ContactDTO dto = service.updateContact(contact);
 			return new ResponseEntity<ContactDTO>(dto, HttpStatus.ACCEPTED);
-		} else throw new RecordNotFoundException("No ID present, can't update : "+ contact);
+		} else
+			throw new RecordNotFoundException("No ID present, can't update : " + contact);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteContact(@PathVariable("id") Long id) {
 		if (service.isIdPresent(id)) {
 			service.deleteContact(id);
 			return new ResponseEntity<Void>(HttpStatus.OK);
-		} else throw new RecordNotFoundException("ID not exists, can't delete : " + id);
+		} else
+			throw new RecordNotFoundException("ID not exists, can't delete : " + id);
 	}
 
 	@GetMapping("/{id}")

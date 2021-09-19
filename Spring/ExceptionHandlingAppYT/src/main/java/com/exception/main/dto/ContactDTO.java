@@ -4,22 +4,23 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
 public class ContactDTO {
 
 	private Long id;
 	private String firstName;
 	private String lastName;
-	
+
 	@Email
 	@NotEmpty(message = "email id is required")
 	private String email;
-	
-	@Size(min=10, max=10, message = "phone no must be 10 characters")
+
+	@Size(min = 10, max = 10, message = "phone no must be 10 characters")
 	@Pattern(regexp = "[0-9]+", message = "phone no must be numeric")
 	private String phoneNo;
 
 	public ContactDTO() {}
-	
+
 	public ContactDTO(Long id, String firstName, String lastName,
 			@Email @NotEmpty(message = "email id is required") String email,
 			@Size(min = 10, max = 10, message = "phone no must be 10 characters") @Pattern(regexp = "[0-9]+", message = "phone no must be numeric") String phoneNo) {
@@ -69,14 +70,14 @@ public class ContactDTO {
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("ContactDTO [firstName=" + firstName);
-		str.append(", lastName=" + lastName); 
+		str.append(", lastName=" + lastName);
 		str.append(", email=" + email);
-		str.append(", phoneNo="	+ phoneNo + "]");
+		str.append(", phoneNo=" + phoneNo + "]");
 		return str.toString();
 	}
 }
