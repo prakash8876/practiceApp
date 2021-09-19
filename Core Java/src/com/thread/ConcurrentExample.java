@@ -17,6 +17,7 @@ public class ConcurrentExample {
 			System.out.println("Map Value:: " + map.get(key));
 			if (key.equals(2)) {
 				map.put(4, 4); // this will throw java.util.ConcurrentModificationException
+//				because we are modifiying map
 			}
 		}
 		
