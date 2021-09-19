@@ -13,26 +13,39 @@ public class ContactService {
 
 	@Autowired
 	private ContactRepository repo;
-	
+
 	public ContactDTO saveContact(ContactDTO dto) {
 		Contact contact = new Contact(dto.getFirstName(), dto.getLastName(), dto.getEmail(), dto.getPhoneNo());
 		Contact contactDB = repo.save(contact);
 		return from(contactDB);
 	}
-	
+
 	public ContactDTO getContactById(Long id) {
 		return repo.findById(id).map(contact -> {
 			return from(contact);
 		}).orElseThrow(() -> new RecordNotFoundException("No ID found for this one : " + id));
 	}
 
-	private ContactDTO from(Contact contactDB) {
-		ContactDTO dto = new ContactDTO();
-		dto.setId(contactDB.getId());
-		dto.setFirstName(contactDB.getFirstName());
-		dto.setLastName(contactDB.getLastName());
-		dto.setEmail(contactDB.getEmail());
-		dto.setPhoneNo(contactDB.getPhoneNo());
+	public boolean isEmailPresent(String email) {
+		return repo.findByEmail(email).isPresent();
+	}
+
+	private ContactDTO from(Contact contact) {
+		ContactDTO dto = new ContactDTO(contact.getId(), contact.getFirstName(), contact.getLastName(),
+				contact.getEmail(), contact.getPhoneNo());
 		return dto;
+	}
+
+	public ContactDTO updateContact(Contact contact) {
+		Contact updated = repo.saveAndFlush(contact);
+		return from(updated);
+	}
+
+	public void deleteContact(Long id) {
+		repo.deleteById(id);
+	}
+
+	public boolean isIdPresent(Long id) {
+		return repo.findById(id).isPresent();
 	}
 }

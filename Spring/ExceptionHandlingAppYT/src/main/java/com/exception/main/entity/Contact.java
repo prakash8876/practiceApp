@@ -8,28 +8,28 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="contact")
+@Table(name = "contact")
 public class Contact {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name ="id")
+	@Column(name = "id")
 	private Long id;
-	
-	@Column(name ="first_name")
+
+	@Column(name = "first_name")
 	private String firstName;
-	
-	@Column(name ="last_name")
+
+	@Column(name = "last_name")
 	private String lastName;
-	
-	@Column(name ="email")
+
+	@Column(name = "email")
 	private String email;
-	
-	@Column(name ="phone")
+
+	@Column(name = "phone")
 	private String phoneNo;
-	
+
 	public Contact() {}
-	
+
 	public Contact(String firstName, String lastName, String email, String phoneNo) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -80,12 +80,12 @@ public class Contact {
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		str.append("Contact [id=" + id); 
+		str.append("Contact [id=" + id);
 		str.append(", firstName=" + firstName);
 		str.append(", lastName=" + lastName);
 		str.append(", email=" + email);
 		str.append(", phoneNo=" + phoneNo + "]");
 		return str.toString();
 	}
-	
+
 }
