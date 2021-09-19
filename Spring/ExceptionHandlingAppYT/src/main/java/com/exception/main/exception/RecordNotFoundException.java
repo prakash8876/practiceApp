@@ -11,7 +11,7 @@ public class RecordNotFoundException extends RuntimeException {
 		super(message);
 	}
 	
-	public RecordNotFoundException(String message, Throwable th) {
-		super(message, th);
+	public RecordNotFoundException(String message, Throwable cause) {
+		super(message, cause);
 	}
 }

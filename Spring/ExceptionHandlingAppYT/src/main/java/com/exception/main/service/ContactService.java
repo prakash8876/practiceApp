@@ -1,5 +1,9 @@
 package com.exception.main.service;
 
+import java.util.Optional;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +29,31 @@ public class ContactService {
 			return from(contact);
 		}).orElseThrow(() -> new RecordNotFoundException("No ID found for this one : " + id));
 	}
+	
+	public boolean isEmailPresent(String email) {
+		return repo.findByEmail(email).isPresent();
+	}
 
-	private ContactDTO from(Contact contactDB) {
+	private ContactDTO from(Contact contact) {
 		ContactDTO dto = new ContactDTO();
-		dto.setId(contactDB.getId());
-		dto.setFirstName(contactDB.getFirstName());
-		dto.setLastName(contactDB.getLastName());
-		dto.setEmail(contactDB.getEmail());
-		dto.setPhoneNo(contactDB.getPhoneNo());
+		dto.setId(contact.getId());
+		dto.setFirstName(contact.getFirstName());
+		dto.setLastName(contact.getLastName());
+		dto.setEmail(contact.getEmail());
+		dto.setPhoneNo(contact.getPhoneNo());
 		return dto;
+	}
+
+	public ContactDTO updateContact(Contact contact) {
+		Contact updated = repo.saveAndFlush(contact);
+		return from(updated);
+	}
+
+	public void deleteContact(Long id) {
+		repo.deleteById(id);
+	}
+
+	public boolean isIdPresent(Long id) {
+		return repo.findById(id).isPresent();
 	}
 }
