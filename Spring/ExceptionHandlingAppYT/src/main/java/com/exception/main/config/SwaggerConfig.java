@@ -14,7 +14,7 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.web.app.contact"))
+				.apis(RequestHandlerSelectors.basePackage("com.exception.main"))
 				.build();
 	}
 
