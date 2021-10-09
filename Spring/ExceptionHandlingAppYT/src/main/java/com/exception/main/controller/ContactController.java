@@ -2,7 +2,8 @@ package com.exception.main.controller;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,8 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping(path = "api/v1/contact")
 public class ContactController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContactController.class);
 
 	@Autowired
 	private ContactService service;
@@ -42,42 +45,56 @@ public class ContactController {
 	@PostMapping(path = "/add", consumes = { "application/json" }, produces = { "application/json" })
 	public ResponseEntity<ContactDTO> saveContact(
 			@ApiParam(value = "Contact Details") @Valid @RequestBody ContactDTO contactDTO) {
-		if (StringUtils.isEmpty(contactDTO.getEmail()) || 
-				service.isEmailPresent(contactDTO.getEmail())) {
-			throw new EmailExistsException("Email already exists or empty.");
-		} else {
+		try {
 			ContactDTO dto = service.saveContact(contactDTO);
+			LOGGER.info("Contact {} saved.", contactDTO);
 			return new ResponseEntity<ContactDTO>(dto, HttpStatus.CREATED);
+		} catch (EmailExistsException ex) {
+			LOGGER.error("Error: {}",ex.getMessage());
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+		
 	}
 
 	@ApiOperation(value = "Update existing Contact. NOTE: include ID", notes = "ID should present")
 	@PutMapping(path = "/update", consumes = { "application/json" }, produces = { "application/json" })
 	public ResponseEntity<ContactDTO> updateContact(
 			@ApiParam(value = "Enter contact details with ID") @Valid @RequestBody Contact contact) {
-		if (contact.getId() != null) {
+		try {
 			ContactDTO dto = service.updateContact(contact);
+			LOGGER.info("{} updated", contact);
 			return new ResponseEntity<ContactDTO>(dto, HttpStatus.ACCEPTED);
-		} else
-			throw new RecordNotFoundException("No ID present, can't update : " + contact);
+		} catch (RecordNotFoundException e) {
+			LOGGER.error("Error: {}", e.getMessage());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@ApiOperation(value = "Delete Contact via ID only")
 	@DeleteMapping(path = "/{id}", consumes = { "application/json" }, produces = { "application/json" })
 	public ResponseEntity<Void> deleteContact(
 			@ApiParam(name = "numeric id only", required = true) @PathVariable("id") Long id) {
-		if (service.isIdPresent(id)) {
+		try {
 			service.deleteContact(id);
-			return new ResponseEntity<Void>(HttpStatus.OK);
-		} else
-			throw new RecordNotFoundException("ID not exists, can't delete : " + id);
+			LOGGER.info("{} id deleted", id);
+			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+		} catch (RecordNotFoundException e) {
+			LOGGER.error("Error: {}", e.getMessage());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@ApiOperation(value = "Fetch Contact by ID")
 	@GetMapping(value = "/{id}", produces = { "application/json" })
 	public ResponseEntity<ContactDTO> fetchContactById(
 			@ApiParam(value = "Id of the contact to be obtained. Cannot be empty.", required = true) @PathVariable("id") Long id) {
-		ContactDTO dto = service.getContactById(id);
-		return new ResponseEntity<ContactDTO>(dto, HttpStatus.OK);
+		try {
+			ContactDTO dto = service.getContactById(id);
+			LOGGER.info("{} id contact fetched", id);
+			return new ResponseEntity<ContactDTO>(dto, HttpStatus.OK);
+		} catch (RecordNotFoundException e) {
+			LOGGER.error("Error: {}", e.getMessage());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 }
